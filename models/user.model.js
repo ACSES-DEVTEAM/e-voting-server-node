@@ -19,7 +19,7 @@ const userSchema = new Schema({
     department: {
         type: String,
         required: 'This field is required.',
-        enum: ['ACSES', 'ELEESA', 'ADGES', 'MESA'],
+        enum: ['ACSES', 'ELEESA', 'ADGES', 'MESA', 'GESA'],
     },
     password: {
         type: String,

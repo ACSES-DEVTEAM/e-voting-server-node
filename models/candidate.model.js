@@ -20,13 +20,17 @@ const candidateSchema = new Schema({
     photo: {
         type: String,
         required: 'This field is required.',
-    }
+    },
+    bio: {
+        type: String,
+        required: 'This field is required.',
+    },
 }, {timestamps: true})
 
 
 // static signup method
-candidateSchema.statics.signup = async function (indexNumber, position, photo) {
-    if (!indexNumber || !position || !photo) {
+candidateSchema.statics.signup = async function (indexNumber, position, photo, bio) {
+    if (!indexNumber || !position || !photo || !bio) {
         throw Error("All Fields Are Required!!")
     }
 
@@ -36,7 +40,7 @@ candidateSchema.statics.signup = async function (indexNumber, position, photo) {
         // return error
         throw Error("Index Number Does Not Exist!!")
     }
-    const candidate = await this.create({ indexNumber, position, photo });
+    const candidate = await this.create({ indexNumber, position, photo, bio });
     
     // return the User and candidate
     return { user, candidate };

@@ -6,9 +6,14 @@ const mongoose = require('mongoose')
 // Register a new Candidate
 const createCandidate = async (req, res) => {
 
-    const { indexNumber, position, photo } = req.body;
+    const { indexNumber, position, photo, bio } = req.body;
     try {
-        const candidate = await Candidate.create({ indexNumber, position, photo });
+        // check if indexNumber exists in User
+        const user = await User.findOne({ indexNumber });
+        if (!user) {
+            return res.status(404).json({ error: "No such candidate from user" });
+        }
+        const candidate = await Candidate.create({ indexNumber, position, photo, bio });
         res.status(200).json(candidate);
     } catch (error) {
         res.status(400).json({ error: error.message });
