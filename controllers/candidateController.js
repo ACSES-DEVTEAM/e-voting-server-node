@@ -45,7 +45,31 @@ const getCandidate = async (req, res) => {
 const getCandidates = async (req, res) => {
 
     const candidates = await Candidate.find({}).sort({ createdAt: -1 });
-    res.status(200).json(candidates);
+
+    // getting indexNumber, position, photo, bio from candidate
+    for (let i = 0; i < candidates.length; i++) {
+        const user = await User.findOne({ indexNumber: candidates[i].indexNumber });
+        if (!user) {
+            return res.status(404).json({ error: "No such candidate from user" });
+        }
+        candidates[i] = { ...candidates[i]._doc, user };
+    }
+
+    const sortedCandidates = [];
+
+    // return indexNumber, position, photo, bio, user from candidate
+    for (let i = 0; i < candidates.length; i++) {
+        const indexNumber = candidates[i].indexNumber;
+        const position = candidates[i].position;
+        const photo = candidates[i].photo;
+        const bio = candidates[i].bio;
+        const votes = candidates[i].votes;
+        const name = candidates[i].user.name;
+        const year = candidates[i].user.year;
+        sortedCandidates[i] = { bio, photo, name, position, year, indexNumber, votes };
+    }
+
+    res.status(200).json(sortedCandidates); 
 }
 
 // delete a Candidate

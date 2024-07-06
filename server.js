@@ -8,11 +8,16 @@ const usersRoutes = require("./routes/usersRoute");
 const candidateRoutes = require("./routes/candidatesRoute");
 const votesRoutes = require("./routes/votesRoute");
 const authRoutes = require("./routes/authRoute");
+const cors = require('cors');
+
 
 const app = express();
 
 // Middlewares
 app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:5173',
+}));
 
 app.use((req, res, next) => {
   console.log(req.path, req.method);

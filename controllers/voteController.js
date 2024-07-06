@@ -11,16 +11,16 @@ const getVotes = async (req, res) => {
 
 // Add vote
  const addVote = async (req, res) => {
-   const { indexNumber } = req.body;    // array of indexNumber of candidates that user voted
+   const { indexNumbers } = req.body;    // array of indexNumber of candidates that user voted
  
    const { id } = req.params;           // id of user
    if (!mongoose.Types.ObjectId.isValid(id)) {
      return res.status(404).json({ error: "No such user" });
    }
  
-  const candidates = await Candidate.find({ indexNumber: { $in: indexNumber } });
+  const candidates = await Candidate.find({ indexNumber: { $in: indexNumbers } });
  
-  if (candidates.length !== indexNumber.length) {
+  if (candidates.length !== indexNumbers.length) {
      return res.status(404).json({ error: "No such candidate from candidate" });
    }
  
@@ -33,13 +33,13 @@ const getVotes = async (req, res) => {
    // add the id and candidate's indexNumber to vote
   const newVotes = {
      voters_id: id,
-    candiate_indexNumber: indexNumber
+    candiate_indexNumber: indexNumbers
   };
   await Vote.create(newVotes);
  
    // update candidate's vote with vote from req.body
   const updatedCandidates = await Candidate.updateMany(
-    { indexNumber: { $in: indexNumber } },
+    { indexNumber: { $in: indexNumbers } },
      { $inc: { votes: 1 } },
      { new: true }
    );

@@ -19,7 +19,7 @@ const userSchema = new Schema({
     department: {
         type: String,
         required: 'This field is required.',
-        enum: ['ACSES', 'ELEESA', 'ADGES', 'MESA', 'GESA'],
+        enum: ['acses', 'eleesa', 'adges', 'mesa', 'gesa'],
     },
     password: {
         type: String,
@@ -28,7 +28,7 @@ const userSchema = new Schema({
     year: {
         type: String,
         required: 'This field is required.',
-        enum: ['One','Two','Three','Four'],
+        enum: ['1','2','3','4'],
     },
     indexNumber: {
         type: String,
