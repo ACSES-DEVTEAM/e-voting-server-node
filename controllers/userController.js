@@ -21,7 +21,7 @@ const login_user = async (req, res) => {
   try {
     const user = await User.login(email, password);
     // const name = user.name;
-    // const lastLogin = user.lastLogin;
+    // const lastLogin = user.lastLogin; 
 
     // Creating token
     const token = createtoken(user._id);
