@@ -12,7 +12,7 @@ router.post('/login', userController.login_user)
 router.post('/signup', userController.signup_user)
 
 // require authenticate for User routes
-// router.use(userAuthenticate)
+router.use(userAuthenticate)
 
 router.get('/getUsers', userController.getUsers)
 

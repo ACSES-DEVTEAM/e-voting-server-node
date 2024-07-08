@@ -109,7 +109,15 @@ userSchema.statics.signup = async function (
     lastLogin: currentDate,
   });
 
-  return user;
+  return {
+    name: user.name,
+    email: user.email,
+    department: user.department,
+    year: user.year,
+    indexNumber: user.indexNumber,
+    lastLogin: user.lastLogin,
+    _id: user._id,
+  }
 };
 
 // static login method
@@ -148,6 +156,7 @@ userSchema.statics.login = async function (email, password) {
     year: doc.year,
     indexNumber: doc.indexNumber,
     lastLogin: doc.lastLogin,
+    _id: doc._id,
   };
 };
 
