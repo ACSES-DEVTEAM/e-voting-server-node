@@ -14,7 +14,7 @@ router.get('/getCandidates', candidateController.getCandidates)
 
 router.get('/getCandidate/', candidateController.getCandidate)
 
-router.use(Authenticate);
+// router.use(Authenticate);
 
 router.delete('/deleteCandidate/:id', candidateController.deleteCandidate)
 

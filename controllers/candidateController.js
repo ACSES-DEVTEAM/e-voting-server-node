@@ -66,7 +66,8 @@ const getCandidates = async (req, res) => {
         const votes = candidates[i].votes;
         const name = candidates[i].user.name;
         const year = candidates[i].user.year;
-        sortedCandidates[i] = { bio, photo, name, position, year, indexNumber, votes };
+        const department = candidates[i].user.department;
+        sortedCandidates[i] = { bio, photo, name, position, year, department, indexNumber, votes };
     }
 
     res.status(200).json(sortedCandidates); 

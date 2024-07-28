@@ -17,7 +17,7 @@ const adminSchema = new Schema({
     department: {
         type: String,
         required: 'This field is required.',
-        enum: ['EL', 'CE', 'MC', 'MA'],
+        enum: ["acses", "eleesa", "adges", "mesa", "gesa"],
     },
     password: {
         type: String,

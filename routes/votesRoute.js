@@ -12,7 +12,9 @@ router.get("/getVotes", voteController.getVotes);
 
 router.post("/addVote/:id", voteController.addVote);
 
-router.use(Authenticate);
+router.get("/getTotalVotes", voteController.getTotalVotes);
+
+// router.use(Authenticate);
 
 router.post("/resetVote", voteController.resetVote);
 

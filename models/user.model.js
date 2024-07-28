@@ -36,6 +36,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    isVoted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -107,6 +111,7 @@ userSchema.statics.signup = async function (
     year,
     indexNumber,
     lastLogin: currentDate,
+    isVoted: false,
   });
 
   return {
@@ -116,6 +121,7 @@ userSchema.statics.signup = async function (
     year: user.year,
     indexNumber: user.indexNumber,
     lastLogin: user.lastLogin,
+    isVoted: user.isVoted,
     _id: user._id,
   }
 };
@@ -156,6 +162,7 @@ userSchema.statics.login = async function (email, password) {
     year: doc.year,
     indexNumber: doc.indexNumber,
     lastLogin: doc.lastLogin,
+    isVoted: doc.isVoted,
     _id: doc._id,
   };
 };

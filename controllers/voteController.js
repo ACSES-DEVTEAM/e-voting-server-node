@@ -1,6 +1,7 @@
 const Vote = require("../models/vote.model");
 const mongoose = require("mongoose");
 const Candidate = require("../models/candidate.model");
+const User = require("../models/user.model");
 
 // get all Votes
 const getVotes = async (req, res) => {
@@ -40,11 +41,16 @@ const addVote = async (req, res) => {
   await Vote.create(newVotes);
 
   // update candidate's vote with vote from req.body
-  const updatedCandidates = await Candidate.updateMany(
+  await Candidate.updateMany(
     { indexNumber: { $in: indexNumbers } },
     { $inc: { votes: 1 } },
     { new: true }
   );
+
+  // update user's isVoted property to true
+  await User.updateOne({ _id: id }, { $set: { isVoted: true } });
+
+  res.status(200).json({ message: "Vote submitted successfully" });
   res.status(200).json(updatedCandidates);
 };
 
@@ -67,8 +73,16 @@ const resetVote = async (req, res) => {
   res.status(200).json(updatedCandidate);
 };
 
+// get the sum of all "candiate_indexNumber" from Votes
+const getTotalVotes = async (req, res) => {
+  const votes = await Vote.find({});
+  const totalVotes = votes.reduce((sum, vote) => sum + vote.candiate_indexNumber.length, 0);
+  res.status(200).json(totalVotes);
+};
+
 module.exports = {
   getVotes,
   addVote,
   resetVote,
+  getTotalVotes,
 };

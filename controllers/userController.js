@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const Candidates = require("../models/candidate.model");
+const Votes = require("../models/vote.model");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
@@ -97,6 +99,28 @@ const updateUser = async (req, res) => {
   res.status(200).json(user);
 };
 
+// get the sum of all users from various departments in the user collection and return them in an array eg:[{department: "acses", count: 10}, {department: "mesa", count: 5}]
+const getSumOfUsersFromDepartments = async (req, res) => {
+  const users = await User.aggregate([
+    {
+      $group: {
+        _id: "$department",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  res.status(200).json(users);
+}
+
+// get all Users and Candidates and Votes
+const getAllUsersFullInfo = async (req, res) => {
+  const users = await User.find({}).sort({ createdAt: -1 });
+  const candidates = await Candidates.find({}).sort({ createdAt: -1 });
+  const votes = await Votes.find({}).sort({ createdAt: -1 });
+  res.status(200).json({ users, candidates, votes });
+  
+}
+
 module.exports = {
   login_user,
   signup_user,
@@ -104,4 +128,6 @@ module.exports = {
   getUsers,
   deleteUser,
   updateUser,
+  getSumOfUsersFromDepartments,
+  getAllUsersFullInfo
 };
