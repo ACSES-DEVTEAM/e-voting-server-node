@@ -31,3 +31,12 @@
 
 - POST `/api/admin/updateSiteMode` - Update the site mode
 - GET `/api/admin/getSiteMode` - Get the site mode
+
+
+### Associations
+
+- GET `/api/associations/getAllAssociations` - Get all associations
+- POST `/api/associations/signupAssociation` - Signup association
+- PUT `/api/associations/updateAssociation` - Update association
+- GET `/api/associations/getAssociationByName` - Get association by name
+- DELETE `/api/associations/deleteAssociation` - Delete association

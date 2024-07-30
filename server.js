@@ -8,6 +8,7 @@ const usersRoutes = require("./routes/usersRoute");
 const candidateRoutes = require("./routes/candidatesRoute");
 const votesRoutes = require("./routes/votesRoute");
 const authRoutes = require("./routes/authRoute");
+const associationRoute = require("./routes/associationRoute");
 const cors = require('cors');
 
 
@@ -30,6 +31,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/candidates", candidateRoutes);
 app.use("/api/votes", votesRoutes);
+app.use("/api/associations", associationRoute);
 
 // Connection to database
 mongoose
