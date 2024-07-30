@@ -35,8 +35,8 @@ const updateAssociation = async (req, res) => {
         // update the association using findOneAndUpdate
         const association = await Associations.findOneAndUpdate(    
             { name },
-            { $set: { portfolio } },
-            { new: true }
+            { $set: { ...req.body } },
+            { new: true, runValidators: true }
         );
         res.status(200).json(association);
     } catch (error) {
