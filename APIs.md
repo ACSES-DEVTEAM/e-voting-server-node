@@ -25,3 +25,9 @@
 - POST `/api/votes/addVote` - Add vote
 - POST `/api/votes/resetVote` - Reset all votes
 - GET `/api/votes/getTotalVotes` - Get total votes
+
+
+### Admin
+
+- POST `/api/admin/updateSiteMode` - Update the site mode
+- GET `/api/admin/getSiteMode` - Get the site mode

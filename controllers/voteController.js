@@ -51,7 +51,7 @@ const addVote = async (req, res) => {
   await User.updateOne({ _id: id }, { $set: { isVoted: true } });
 
   res.status(200).json({ message: "Vote submitted successfully" });
-  res.status(200).json(updatedCandidates);
+  // res.status(200).json(updatedCandidates);
 };
 
 // Reset Vote by indexNumber

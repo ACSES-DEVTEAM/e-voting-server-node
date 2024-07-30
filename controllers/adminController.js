@@ -15,29 +15,38 @@ const createtoken = (_id) => {
   }
 };
 
-// login a Admin
-const login_admin = async (req, res) => {};
+// update siteMode
+const updateSiteMode = async (req, res) => {
+  const { siteMode } = req.body;
+  try {
+    const admin = await Admin.findOneAndUpdate(
+      { siteMode: { $ne: siteMode } }, // Don't update if the siteMode is unchanged
+      { siteMode },
+      { new: true, runValidators: true }
+    );
+    if (!admin) {
+      return res.status(404).json({ error: "No such admin" });
+    }
+    res.status(200).json(admin);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
-// create a new Admin
-const signup_admin = async (req, res) => {};
-
-// get Admin by id
-const getAdmin = async (req, res) => {};
-
-// get all Admins
-const getAdmins = async (req, res) => {};
-
-// delete a Admin
-const deleteAdmin = async (req, res) => {};
-
-// update a Admin
-const updateAdmin = async (req, res) => {};
+// Get the siteMode
+const getSiteMode = async (req, res) => {
+  try {
+    const admin = await Admin.findOne();
+    if (!admin) {
+      return res.status(404).json({ error: "No such admin" });
+    }
+    res.status(200).json(admin);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
-  login_admin,
-  signup_admin,
-  getAdmin,
-  getAdmins,
-  deleteAdmin,
-  updateAdmin,
+  updateSiteMode,
+  getSiteMode,
 };

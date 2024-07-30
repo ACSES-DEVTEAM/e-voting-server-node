@@ -40,6 +40,14 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isAuditor: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -84,48 +92,65 @@ userSchema.statics.signup = async function (
     throw Error("This index number is already registered");
   }
 
-  if (department !== "acses" && department !== "eleesa" && department !== "adges" && department !== "mesa" && department !== "gesa") {
-    throw Error("Invalid Department");
-  }
+  if (
+    department !== "acses" &&
+    department !== "eleesa" &&
+    department !== "adges" &&
+    department !== "mesa" &&
+    department !== "gesa"
+  ) {
+    if (
+      department !== "acses" &&
+      department !== "eleesa" &&
+      department !== "adges" &&
+      department !== "mesa" &&
+      department !== "gesa"
+    ) {
+      throw Error("Invalid Department");
+    }
 
-  if (year !== "1" && year !== "2" && year !== "3" && year !== "4") {
-    throw Error("Invalid Year");
-  }
+    if (year !== "1" && year !== "2" && year !== "3" && year !== "4") {
+      if (year !== "1" && year !== "2" && year !== "3" && year !== "4") {
+        throw Error("Invalid Year");
+      }
 
-  
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
 
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
+      const date = new Date();
+      let dateDay = date.getDate();
+      let dateMonth = date.getMonth();
+      let dateYear = date.getFullYear();
+      let currentDate = `${dateDay}/${dateMonth}/${dateYear}`;
 
-  const date = new Date();
-  let dateDay = date.getDate();
-  let dateMonth = date.getMonth();
-  let dateYear = date.getFullYear();
-  let currentDate = `${dateDay}/${dateMonth}/${dateYear}`;
+      const user = await this.create({
+        name,
+        email,
+        password: hash,
+        department,
+        year,
+        indexNumber,
+        lastLogin: currentDate,
+        isVoted: false,
+        isAdmin: false,
+        isAuditor: false,
+      });
 
-  const user = await this.create({
-    name,
-    email,
-    password: hash,
-    department,
-    year,
-    indexNumber,
-    lastLogin: currentDate,
-    isVoted: false,
-  });
-
-  return {
-    name: user.name,
-    email: user.email,
-    department: user.department,
-    year: user.year,
-    indexNumber: user.indexNumber,
-    lastLogin: user.lastLogin,
-    isVoted: user.isVoted,
-    _id: user._id,
+      return {
+        name: user.name,
+        email: user.email,
+        department: user.department,
+        year: user.year,
+        indexNumber: user.indexNumber,
+        lastLogin: user.lastLogin,
+        isVoted: user.isVoted,
+        isAdmin: user.isAdmin,
+        isAuditor: user.isAuditor,
+        _id: user._id,
+      };
+    }
   }
 };
-
 // static login method
 userSchema.statics.login = async function (email, password) {
   if (!email || !password) {
@@ -163,6 +188,8 @@ userSchema.statics.login = async function (email, password) {
     indexNumber: doc.indexNumber,
     lastLogin: doc.lastLogin,
     isVoted: doc.isVoted,
+    isAdmin: doc.isAdmin,
+    isAuditor: doc.isAuditor,
     _id: doc._id,
   };
 };
