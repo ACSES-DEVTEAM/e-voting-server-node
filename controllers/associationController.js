@@ -24,7 +24,7 @@ const signupAssociation = async (req, res) => {
 
 // Update an association
 const updateAssociation = async (req, res) => {
-    const { name, portfolio } = req.body;
+    const { name } = req.body;
     // use put method to update
     try {
         // check if name exists in Associations then update

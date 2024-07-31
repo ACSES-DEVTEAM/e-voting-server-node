@@ -26,5 +26,7 @@ router.delete('/deleteUser/:id', userController.deleteUser)
 
 router.put('/updateUser/:id', userController.updateUser)
 
+router.put('/updateUserByIndexNumber', userController.updateUserByIndexNumber)
+
 
 module.exports = router

@@ -10,6 +10,7 @@
 - GET `/api/users/getUser/:id` - Get user by id
 - DELETE `/api/users/deleteUser/:id` - Delete user by id
 - PUT `/api/users/updateUser/:id` - Update user by id
+- PUT `/api/users/updateUserByIndexNumber` - Update user by index number
 
 ### Candidates
 
