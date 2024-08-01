@@ -92,7 +92,15 @@ const updateUser = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No such user" });
   }
-  const user = await User.findOneAndUpdate({ _id: id }, { ...req.body });
+  
+  // Explicitly handle isAdmin and isAuditor flags
+  const updateData = {
+    ...req.body,
+    isAdmin: req.body.isAdmin === true,
+    isAuditor: req.body.isAuditor === true
+  };
+
+  const user = await User.findOneAndUpdate({ _id: id }, updateData, { new: true });
   if (!user) {
     return res.status(404).json({ error: "No such user" });
   }
@@ -118,24 +126,8 @@ const getAllUsersFullInfo = async (req, res) => {
   const candidates = await Candidates.find({}).sort({ createdAt: -1 });
   const votes = await Votes.find({}).sort({ createdAt: -1 });
   res.status(200).json({ users, candidates, votes });
+  
 }
-
-// update a User by indexNumber
-const updateUserByIndexNumber = async (req, res) => {
-  const { indexNumber } = req.body;
-  // check if indexNumber exists in User then update
-  const userExists = await User.findOne({ indexNumber });
-  if (!userExists) {
-    return res.status(404).json({ error: "No such user" });
-  }
-  // update the user using findOneAndUpdate
-  const user = await User.findOneAndUpdate(
-    { indexNumber },
-    { $set: { ...req.body } },
-    { new: true, runValidators: true }
-  );
-  res.status(200).json(user);
-};
 
 module.exports = {
   login_user,
@@ -145,6 +137,5 @@ module.exports = {
   deleteUser,
   updateUser,
   getSumOfUsersFromDepartments,
-  getAllUsersFullInfo,
-  updateUserByIndexNumber
+  getAllUsersFullInfo
 };
