@@ -13,6 +13,9 @@ const getVotes = async (req, res) => {
 // Add vote
 const addVote = async (req, res) => {
   const { indexNumbers } = req.body; // array of indexNumber of candidates that user voted
+  if (indexNumbers.includes("")) {
+    indexNumbers.splice(indexNumbers.indexOf(""), 1);
+  }
 
   const { id } = req.params; // id of user
   if (!mongoose.Types.ObjectId.isValid(id)) {
