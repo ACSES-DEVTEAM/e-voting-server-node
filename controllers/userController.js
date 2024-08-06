@@ -3,6 +3,8 @@ const Candidates = require("../models/candidate.model");
 const Votes = require("../models/vote.model");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const Student = require("../models/student.model");
+const Associations = require("../models/associations.model");
 
 // create token
 const createtoken = (_id) => {
@@ -23,7 +25,7 @@ const login_user = async (req, res) => {
   try {
     const user = await User.login(email, password);
     // const name = user.name;
-    // const lastLogin = user.lastLogin; 
+    // const lastLogin = user.lastLogin;
 
     // Creating token
     const token = createtoken(user._id);
@@ -37,21 +39,25 @@ const login_user = async (req, res) => {
 
 // create a new User
 const signup_user = async (req, res) => {
+  const { name, email, password, department, year, indexNumber } = req.body;
+  try {
+    const user = await User.signup(
+      name,
+      email,
+      password,
+      department,
+      year,
+      indexNumber
+    );
 
-  const {name, email, password, department, year, indexNumber} = req.body
-    try {
-        const user = await User.signup(name, email, password, department, year, indexNumber)
+    // Creating token
+    const token = createtoken(user._id);
 
-        // Creating token
-        const token = createtoken(user._id)
-        
-        //res.status(200).json({ username, email, lastLogin, token })
-        res.status(200).json({ user, token })
-
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-
+    //res.status(200).json({ username, email, lastLogin, token })
+    res.status(200).json({ user, token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 // get User by id
@@ -110,7 +116,7 @@ const getSumOfUsersFromDepartments = async (req, res) => {
     },
   ]);
   res.status(200).json(users);
-}
+};
 
 // get all Users and Candidates and Votes
 const getAllUsersFullInfo = async (req, res) => {
@@ -118,7 +124,7 @@ const getAllUsersFullInfo = async (req, res) => {
   const candidates = await Candidates.find({}).sort({ createdAt: -1 });
   const votes = await Votes.find({}).sort({ createdAt: -1 });
   res.status(200).json({ users, candidates, votes });
-}
+};
 
 // update a User by indexNumber
 const updateUserByIndexNumber = async (req, res) => {
@@ -137,6 +143,50 @@ const updateUserByIndexNumber = async (req, res) => {
   res.status(200).json(user);
 };
 
+// Accept object from body and insert many into Student collection
+const addStudents = async (req, res) => {
+  try {
+    const results = req.body;
+    let response = [];
+    const associationName = results[1];
+
+    const associationExists = await Associations.findOne({ name: associationName });
+    if (!associationExists) {
+      return res.status(404).json({ error: "No such association. Add association first. - " + associationName });
+    }
+
+    for (const student of results[0]) {
+      const result = await Student.addStudent(
+        student.name,
+        student.indexNumber,
+        associationName,
+        student.year,
+        student.contact
+      );
+      response.push(result);
+    }
+    res.status(200).json({ message: response });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// updateVotingCode
+const updateVotingCode = async (req, res) => {
+  const response = await Student.updateVotingCode();
+  res.status(200).json({ message: response });
+};
+
+// sendAssociationCodes
+const sendAssociationCodes = async (req, res) => {
+  const association = req.body;
+  const response = await Student.sendAssociationCodes(association);
+  console.log("User ID: ", association);
+  console.log("Response: ", response);  
+  res.status(200).json({ message: response });
+};
+
 module.exports = {
   login_user,
   signup_user,
@@ -146,5 +196,8 @@ module.exports = {
   updateUser,
   getSumOfUsersFromDepartments,
   getAllUsersFullInfo,
-  updateUserByIndexNumber
+  updateUserByIndexNumber,
+  addStudents,
+  updateVotingCode,
+  sendAssociationCodes,
 };

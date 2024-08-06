@@ -28,5 +28,11 @@ router.put('/updateUser/:id', userController.updateUser)
 
 router.put('/updateUserByIndexNumber', userController.updateUserByIndexNumber)
 
+router.post('/addStudents', userController.addStudents)
+
+router.get('/sendAssociationCodes', userController.sendAssociationCodes)
+
+router.get('/updateVotingCode/', userController.updateVotingCode)
+
 
 module.exports = router
