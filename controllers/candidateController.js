@@ -50,7 +50,7 @@ const getCandidates = async (req, res) => {
     for (let i = 0; i < candidates.length; i++) {
         const user = await User.findOne({ indexNumber: candidates[i].indexNumber });
         if (!user) {
-            return res.status(404).json({ error: "No such candidate from user" });
+            return res.status(404).json({ error: "No such candidate from user", indexNumber: candidates[i].indexNumber });
         }
         candidates[i] = { ...candidates[i]._doc, user };
     }

@@ -20,17 +20,31 @@ const createtoken = (_id) => {
 };
 
 // login a User
-const login_user = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.login(email, password);
-    // const name = user.name;
-    // const lastLogin = user.lastLogin;
+// const login_user = async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await User.login(email, password);
+//     // const name = user.name;
+//     // const lastLogin = user.lastLogin;
 
-    // Creating token
+//     // Creating token
+//     const token = createtoken(user._id);
+
+//     //res.status(200).json({ name, email, lastLogin, token });
+//     res.status(200).json({ user, token });
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// };
+
+// login a User
+const login_user = async (req, res) => {
+  const { indexNumber, password, department } = req.body;
+  try {
+    const user = await User.loginIndexNumber(indexNumber, password, department);
+    
     const token = createtoken(user._id);
 
-    //res.status(200).json({ name, email, lastLogin, token });
     res.status(200).json({ user, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -156,7 +170,7 @@ const addStudents = async (req, res) => {
     }
 
     for (const student of results[0]) {
-      const result = await Student.addStudent(
+      const result = await User.addStudent(
         student.name,
         student.indexNumber,
         associationName,
@@ -174,14 +188,14 @@ const addStudents = async (req, res) => {
 
 // updateVotingCode
 const updateVotingCode = async (req, res) => {
-  const response = await Student.updateVotingCode();
+  const response = await User.updateVotingCode();
   res.status(200).json({ message: response });
 };
 
 // sendAssociationCodes
 const sendAssociationCodes = async (req, res) => {
   const association = req.body;
-  const response = await Student.sendAssociationCodes(association);
+  const response = await User.sendAssociationCodes(association);
   console.log("User ID: ", association);
   console.log("Response: ", response);  
   res.status(200).json({ message: response });
