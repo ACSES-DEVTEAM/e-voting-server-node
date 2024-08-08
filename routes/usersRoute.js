@@ -30,6 +30,8 @@ router.put('/updateUserByIndexNumber', userController.updateUserByIndexNumber)
 
 router.post('/addStudents', userController.addStudents)
 
+router.post('/addStudent', userController.addStudent)
+
 router.get('/sendAssociationCodes', userController.sendAssociationCodes)
 
 router.get('/updateVotingCode/', userController.updateVotingCode)

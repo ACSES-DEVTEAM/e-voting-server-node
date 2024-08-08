@@ -186,6 +186,20 @@ const addStudents = async (req, res) => {
   }
 };
 
+// Accept object from body and insert many into Student collection
+const addStudent = async (req, res) => {
+  try {
+    const { name, indexNumber, association, year, contact } = req.body;
+    
+    const newStudent = await User.addStudent(name, indexNumber, association, year, contact);
+
+    res.status(200).json({ message: newStudent });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // updateVotingCode
 const updateVotingCode = async (req, res) => {
   const response = await User.updateVotingCode();
@@ -212,6 +226,7 @@ module.exports = {
   getAllUsersFullInfo,
   updateUserByIndexNumber,
   addStudents,
+  addStudent,
   updateVotingCode,
   sendAssociationCodes,
 };
