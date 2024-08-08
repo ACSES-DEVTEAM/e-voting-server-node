@@ -46,7 +46,20 @@ const getSiteMode = async (req, res) => {
   }
 };
 
+// Login Admin
+const loginAdmin = async (req, res) => {
+  const { indexNumber, password } = req.body;
+  try {
+    const admin = await Admin.login(indexNumber, password);
+    const token = createtoken(admin._id);
+    res.status(200).json({ admin, token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   updateSiteMode,
   getSiteMode,
+  loginAdmin,
 };

@@ -7,5 +7,7 @@ router.post('/updateSiteMode', adminController.updateSiteMode)
 
 router.get('/getSiteMode', adminController.getSiteMode)
 
+router.post('/loginAdmin', adminController.loginAdmin)
+
 
 module.exports = router

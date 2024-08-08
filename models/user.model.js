@@ -238,7 +238,11 @@ userSchema.statics.login = async function (email, password) {
 };
 
 // static login method with IndexNumber
-userSchema.statics.loginIndexNumber = async function (indexNumber, password, department) {
+userSchema.statics.loginIndexNumber = async function (
+  indexNumber,
+  password,
+  department
+) {
   if (!indexNumber || !password || !department) {
     throw Error("All Fields Are Required!!");
   }
@@ -247,30 +251,22 @@ userSchema.statics.loginIndexNumber = async function (indexNumber, password, dep
   if (!user) {
     throw Error("Incorrect Index Number");
   }
-  
+
   // const match = await bcrypt.compare(password, user.password);
   const passwordMatch = await this.findOne({ votingCode: password });
   if (!passwordMatch) {
     throw Error("Incorrect Password");
   }
 
-  
   const students = await this.find({}).sort({ createdAt: -1 });
 
   students.forEach((dept) => {
     if (!dept.department.includes(department)) {
-      throw Error("Department does not exist");      
+      throw Error("Department does not exist");
     }
   });
 
-
-  const departments = [
-    "acses",
-    "gesa",
-    "adges",
-    "mesa",
-    "eleesa",
-  ];
+  const departments = ["acses", "gesa", "adges", "mesa", "eleesa"];
 
   if (!departments.includes(department)) {
     throw new Error("Department does not exist");
@@ -319,20 +315,13 @@ userSchema.statics.addStudent = async function (
   indexNumber,
   department,
   year,
-  contact,
+  contact
 ) {
-
   let errors = [];
   let bIndexNumber = false;
   let bAssociation = false;
 
-  if (
-    !name ||
-    !indexNumber ||
-    !department ||
-    !year ||
-    !contact
-  ) {
+  if (!name || !indexNumber || !department || !year || !contact) {
     errors.push("Please fill in all fields");
   }
 
@@ -345,8 +334,10 @@ userSchema.statics.addStudent = async function (
       if (element === department) {
         bAssociation = true;
         shouldSave = false;
-        errors.push("Student already exists - " + indexNumber + " in " + department);
-      } 
+        errors.push(
+          "Student already exists - " + indexNumber + " in " + department
+        );
+      }
     });
     if (shouldSave) {
       student.department.push(department);
@@ -431,15 +422,23 @@ userSchema.statics.sendAssociationCodes = async function (associationName) {
     client: associationName,
   };
 
-  data.contact.forEach((contact,index) => {
-    const contactInfo = contact + ' = ["name" = "' + data.name[index] + ', "code" = "' + data.votingCode[index] + '"]'  
-    recipients.push(contactInfo)
+  data.contact.forEach((contact, index) => {
+    const contactInfo =
+      contact +
+      ' = ["name" = "' +
+      data.name[index] +
+      ', "code" = "' +
+      data.votingCode[index] +
+      '"]';
+    recipients.push(contactInfo);
   });
 
-  const smsAPIMessage = {"sender": assNameInput,
-    "message": "Hello <%name%>, <%code%> is your voting code for the election. Keep it safe.",
-    recipients
-    };
+  const smsAPIMessage = {
+    sender: assNameInput,
+    message:
+      "Hello <%name%>, <%code%> is your voting code for the election. Keep it safe.",
+    recipients,
+  };
 
   return smsAPIMessage;
 };
