@@ -40,6 +40,13 @@ candidateSchema.statics.signup = async function (indexNumber, position, photo, b
         // return error
         throw Error("Index Number Does Not Exist!!")
     }
+
+    const candidateExist = await this.findOne({ indexNumber });
+    if (candidateExist) {
+        // return error
+        throw Error("Candidate Already Exists!!")
+    }
+    
     const candidate = await this.create({ indexNumber, position, photo, bio });
     
     // return the User and candidate
