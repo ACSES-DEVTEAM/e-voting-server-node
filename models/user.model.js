@@ -1,54 +1,34 @@
+/**
+ * The mongoose module provides a straight-forward, schema-based solution
+ * to model your application data. It includes built-in type casting, validation,
+ * query building, business logic hooks and more.
+ */
 const mongoose = require("mongoose");
+
+/**
+ * Bcrypt is a password hashing function that is intentionally slow.
+ * This means that it is not suitable for high-performance applications
+ * (e.g., server-side web apps) with a lot of traffic.
+ */
 const bcrypt = require("bcrypt");
+
+/**
+ * Validator is a library of string validators and sanitizers.
+ * It helps you validate and sanitize data, removing unwanted characters
+ * and providing a good starting point when building out the validations
+ * for your data.
+ */
 const validator = require("validator");
+
+/**
+ * Axios is a promise-based HTTP client for the browser and node.js.
+ * It is a rewrite of the $http service in AngularJS.
+ */
+const axios = require("axios");
 
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
-  // {
-  //   name: {
-  //     type: String,
-  //     required: "This field is required.",
-  //   },
-  //   email: {
-  //     type: String,
-  //     required: "This field is required.",
-  //   },
-  //   department: {
-  //     type: String,
-  //     required: "This field is required.",
-  //     enum: ["acses", "eleesa", "adges", "mesa", "gesa"],
-  //   },
-  //   password: {
-  //     type: String,
-  //     required: "This field is required.",
-  //   },
-  //   year: {
-  //     type: String,
-  //     required: "This field is required.",
-  //     enum: ["1", "2", "3", "4"],
-  //   },
-  //   indexNumber: {
-  //     type: String,
-  //     required: "This field is required.",
-  //   },
-  //   lastLogin: {
-  //     type: String,
-  //     required: true,
-  //   },
-  //   isVoted: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
-  //   isAdmin: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
-  //   isAuditor: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
-  // },
   {
     name: {
       type: String,
@@ -95,7 +75,18 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-// static signup method
+/**
+ * Static method to sign up a new user
+ * @param {string} name - The name of the user
+ * @param {string} email - The email of the user
+ * @param {string} password - The password of the user
+ * @param {string} department - The department of the user
+ * @param {string} year - The year of the user
+ * @param {string} indexNumber - The index number of the user
+ * @throws {Error} Throws an error if any of the required fields are missing
+ * or if the name, email, password, department, or year are invalid
+ * @returns {object} Returns an object containing the details of the newly created user
+ */
 userSchema.statics.signup = async function (
   name,
   email,
@@ -194,7 +185,17 @@ userSchema.statics.signup = async function (
     }
   }
 };
-// static login method
+
+/**
+ * Asynchronous function that logs in a user using their email and password.
+ * 
+ * @param {string} email - The email of the user.
+ * @param {string} password - The password of the user.
+ * @throws {Error} Throws an error if any of the parameters are missing.
+ * @throws {Error} Throws an error if the user is not found.
+ * @throws {Error} Throws an error if the password does not match.
+ * @returns {Object} - An object containing the user's name, email, department, year, index number, last login date, voting status, admin status, and auditor status.
+ */
 userSchema.statics.login = async function (email, password) {
   if (!email || !password) {
     throw Error("All Fields Are Required!!");
@@ -237,27 +238,41 @@ userSchema.statics.login = async function (email, password) {
   };
 };
 
-// static login method with IndexNumber
+/**
+ * Static method to login a user using their index number, password, and department.
+ * @param {string} indexNumber - The index number of the user.
+ * @param {string} password - The voting code of the user.
+ * @param {string} department - The department of the user.
+ * @throws {Error} Throws an error if any of the parameters are missing.
+ * @throws {Error} Throws an error if the user is not found.
+ * @throws {Error} Throws an error if the password does not match.
+ * @throws {Error} Throws an error if the department does not exist.
+ * @returns {Object} - An object containing the user's name, department, year, index number, last login date, voting status, admin status, and auditor status.
+ */
 userSchema.statics.loginIndexNumber = async function (
   indexNumber,
   password,
   department
 ) {
+  // Check if all fields are provided
   if (!indexNumber || !password || !department) {
     throw Error("All Fields Are Required!!");
   }
 
+  // Find the user by index number
   const user = await this.findOne({ indexNumber });
   if (!user) {
     throw Error("Incorrect Index Number");
   }
 
+  // Find the user by voting code
   // const match = await bcrypt.compare(password, user.password);
   const passwordMatch = await this.findOne({ votingCode: password });
   if (!passwordMatch) {
     throw Error("Incorrect Password");
   }
 
+  // Check if the department exists
   const students = await this.find({}).sort({ createdAt: -1 });
 
   students.forEach((dept) => {
@@ -266,12 +281,14 @@ userSchema.statics.loginIndexNumber = async function (
     }
   });
 
+  // Check if the department is valid
   const departments = ["acses", "gesa", "adges", "mesa", "eleesa"];
 
   if (!departments.includes(department)) {
     throw new Error("Department does not exist");
   }
 
+  // Update the last login date
   const date = new Date();
   let dateDay = date.getDate();
   let dateMonth = date.getMonth() + 1;
@@ -284,18 +301,7 @@ userSchema.statics.loginIndexNumber = async function (
     returnOriginal: false,
   });
 
-  // return {
-  //   name: doc.name,
-  //   email: doc.email,
-  //   department: doc.department,
-  //   year: doc.year,
-  //   indexNumber: doc.indexNumber,
-  //   lastLogin: doc.lastLogin,
-  //   isVoted: doc.isVoted,
-  //   isAdmin: doc.isAdmin,
-  //   isAuditor: doc.isAuditor,
-  //   _id: doc._id,
-  // };
+  // Return the user's information
   return {
     name: doc.name,
     department: department,
@@ -309,7 +315,16 @@ userSchema.statics.loginIndexNumber = async function (
   };
 };
 
-// static function to add a new student
+/**
+ * Adds a new student to the database.
+ *
+ * @param {string} name - The name of the student.
+ * @param {string} indexNumber - The index number of the student.
+ * @param {string} department - The department of the student.
+ * @param {string} year - The year of study of the student.
+ * @param {string} contact - The contact number of the student.
+ * @returns {Object} An object containing any errors or the newly created student.
+ */
 userSchema.statics.addStudent = async function (
   name,
   indexNumber,
@@ -381,7 +396,11 @@ userSchema.statics.addStudent = async function (
   return { newStudent };
 };
 
-// static function to update all students votingCode
+/**
+ * Updates the voting codes for all students in the database.
+ * 
+ * @returns {Promise<Array>} An array of updated student objects.
+ */
 userSchema.statics.updateVotingCode = async function () {
   const students = await this.find({});
   for (const student of students) {
@@ -392,7 +411,13 @@ userSchema.statics.updateVotingCode = async function () {
   return students;
 };
 
-// static function that returns all students
+/**
+ * Sends association codes to students of a specified association.
+ *
+ * @param {Object} associationName - The name of the association.
+ * @param {string} associationName.association - The name of the association.
+ * @return {Object} An object containing the sender, message, and recipients.
+ */
 userSchema.statics.sendAssociationCodes = async function (associationName) {
   const students = await this.find({}).sort({ createdAt: -1 });
   const assNameInput = associationName.association;
@@ -439,6 +464,25 @@ userSchema.statics.sendAssociationCodes = async function (associationName) {
       "Hello <%name%>, <%code%> is your voting code for the election. Keep it safe.",
     recipients,
   };
+
+  /*const config = {
+    method: "post",
+    url: "https://sms.arkesel.com/api/v2/sms/template/send",
+    headers: {
+      "api-key": "RUV1bUtzaGpaSE9XVXNlV3FZUEw",
+    },
+    data: smsAPIMessage,
+  };
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return error;
+    });*/
 
   return smsAPIMessage;
 };

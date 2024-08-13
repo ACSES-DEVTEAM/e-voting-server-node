@@ -210,8 +210,8 @@ const updateVotingCode = async (req, res) => {
 const sendAssociationCodes = async (req, res) => {
   const association = req.body;
   const response = await User.sendAssociationCodes(association);
-  console.log("User ID: ", association);
-  console.log("Response: ", response);  
+  // console.log("User ID: ", association);
+  // console.log("Response: ", response);  
   res.status(200).json({ message: response });
 };
 
