@@ -449,12 +449,7 @@ userSchema.statics.sendAssociationCodes = async function (associationName) {
 
   data.contact.forEach((contact, index) => {
     const contactInfo =
-      contact +
-      ' = ["name" = "' +
-      data.name[index] +
-      ', "code" = "' +
-      data.votingCode[index] +
-      '"]';
+      `${contact} = ["name" = "${data.name[index]}", "code" = "${data.votingCode[index]}"]`;
     recipients.push(contactInfo);
   });
 
@@ -465,7 +460,7 @@ userSchema.statics.sendAssociationCodes = async function (associationName) {
     recipients,
   };
 
-  /*const config = {
+  const config = {
     method: "post",
     url: "https://sms.arkesel.com/api/v2/sms/template/send",
     headers: {
@@ -482,9 +477,9 @@ userSchema.statics.sendAssociationCodes = async function (associationName) {
     .catch(function (error) {
       console.log(error);
       return error;
-    });*/
+    });
 
-  return smsAPIMessage;
+  // return smsAPIMessage;
 };
 
 module.exports = mongoose.model("User", userSchema);
