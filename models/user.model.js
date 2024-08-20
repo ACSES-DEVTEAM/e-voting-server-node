@@ -336,8 +336,24 @@ userSchema.statics.addStudent = async function (
   let bIndexNumber = false;
   let bAssociation = false;
 
-  if (!name || !indexNumber || !department || !year || !contact) {
-    errors.push("Please fill in all fields");
+  if (!name) {
+    errors.push("Please enter the name");
+  }
+
+  if (!indexNumber) {
+    errors.push("Please enter the index number");
+  }
+
+  if (!department) {
+    errors.push("Please enter the department");
+  }
+
+  if (!year) {
+    errors.push("Please enter the year of study");
+  }
+
+  if (!contact) {
+    errors.push("Please enter the contact number");
   }
 
   const student = await this.findOne({ indexNumber });
@@ -460,26 +476,26 @@ userSchema.statics.sendAssociationCodes = async function (associationName) {
     recipients,
   };
 
-  const config = {
-    method: "post",
-    url: "https://sms.arkesel.com/api/v2/sms/template/send",
-    headers: {
-      "api-key": "RUV1bUtzaGpaSE9XVXNlV3FZUEw",
-    },
-    data: smsAPIMessage,
-  };
+  // const config = {
+  //   method: "post",
+  //   url: "https://sms.arkesel.com/api/v2/sms/template/send",
+  //   headers: {
+  //     "api-key": "RUV1bUtzaGpaSE9XVXNlV3FZUEw",
+  //   },
+  //   data: smsAPIMessage,
+  // };
 
-  axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-      return response.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-      return error;
-    });
+  // axios(config)
+  //   .then(function (response) {
+  //     console.log(JSON.stringify(response.data));
+  //     return response.data;
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //     return error;
+  //   });
 
-  // return smsAPIMessage;
+  return smsAPIMessage;
 };
 
 module.exports = mongoose.model("User", userSchema);

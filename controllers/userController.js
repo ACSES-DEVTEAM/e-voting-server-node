@@ -212,7 +212,7 @@ const sendAssociationCodes = async (req, res) => {
   const response = await User.sendAssociationCodes(association);
   // console.log("User ID: ", association);
   // console.log("Response: ", response);  
-  res.status(200).json({ message: response });
+  res.status(200).json({ message: response, association: association });
 };
 
 module.exports = {

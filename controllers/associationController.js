@@ -64,6 +64,9 @@ const deleteAssociation = async (req, res) => {
   try {
     const association = await Associations.findOneAndDelete({ name });
     const students = await Student.find({}).sort({ createdAt: -1 });
+    if (!association) {
+      return res.status(404).json({ error: "No such association" });
+    }
     let noAssociation = [];
     let someAssociation = [];
     students.forEach((dept) => {
@@ -79,9 +82,6 @@ const deleteAssociation = async (req, res) => {
         }
       }
     });
-    if (!association) {
-      return res.status(404).json({ error: "No such association" });
-    }
 
     for (let i = 0; i < noAssociation.length; i++) {
       const student = await Student.findOneAndDelete({
@@ -98,7 +98,7 @@ const deleteAssociation = async (req, res) => {
       );
     }
 
-    res.status(200).json(association);
+    res.status(200).json(association, noAssociation, someAssociation);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
