@@ -49,6 +49,20 @@ adminSchema.statics.login = async function (indexNumber, password) {
   }
 
   // For super admin
+  if (!indexNumber && password) { 
+    const admin = await this.findOne({ password });
+
+    if (admin.password !== password) {
+      throw new Error('Only Super Admin can login');
+    }
+
+    return {
+      message: "Super Admin Logged In",
+    };
+  }
+
+
+  // For super admin
   if (indexNumber && password) {
     const user = await User.findOne({ indexNumber });
 
