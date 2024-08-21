@@ -17,7 +17,7 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://admin-dashboard-frontend-livid.vercel.app', 'https://acses-e-voting-frontend.vercel.app'],
 }));
 
 app.use((req, res, next) => {
