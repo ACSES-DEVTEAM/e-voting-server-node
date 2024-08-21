@@ -12,10 +12,11 @@ const getVotes = async (req, res) => {
 
 // Add vote
 const addVote = async (req, res) => {
-  const { indexNumbers } = req.body; // array of indexNumber of candidates that user voted
-  if (indexNumbers.includes("")) {
-    indexNumbers.splice(indexNumbers.indexOf(""), 1);
-  }
+  let { indexNumbers } = req.body; // array of indexNumber of candidates that user voted
+  // if (indexNumbers.includes("")) {
+  //   indexNumbers.splice(indexNumbers.indexOf(""), 1);
+  // }
+  indexNumbers = indexNumbers.filter(indexNumber => indexNumber !== "");
 
   const { id } = req.params; // id of user
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -26,9 +27,9 @@ const addVote = async (req, res) => {
     indexNumber: { $in: indexNumbers },
   });
 
-  if (candidates.length !== indexNumbers.length) {
-    return res.status(404).json({ error: "No such candidate from candidate" });
-  }
+  // if (candidates.length !== indexNumbers.length) {
+  //   return res.status(404).json({ error: "No such candidate from candidate" });
+  // }
 
   // check if user has already voted
   const vote = await Vote.findOne({ voters_id: id });

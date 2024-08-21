@@ -26,17 +26,18 @@ async function updateCollection() {
 
 
 async function insertSiteMode() {
-  const uri = 'mongodb+srv://acses:acses@evotingdb.dtgqsqi.mongodb.net/?retryWrites=true&w=majority&appName=eVotingDB';
+  const uri = 'mongodb+srv://acsessrid:acsessrid24@acsesvoting.5x7o4ct.mongodb.net/';
   const client = new MongoClient(uri);
 
   try {
     await client.connect();
-    const database = client.db('test');
+    const database = client.db('acsesvoting');
     const collection = database.collection('admins');
 
     await collection.insertOne(
       {
         siteMode: "Default",
+        password: "superAdmin321",
       }
     );
 
@@ -138,6 +139,6 @@ async function insertAssociations() {
   }
 }
 
-insertAssociations();
-//insertSiteMode();
+// insertAssociations();
+insertSiteMode();
 // updateCollection();z
