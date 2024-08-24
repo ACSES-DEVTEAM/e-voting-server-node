@@ -14,8 +14,18 @@ router.post("/addVote/:id", voteController.addVote);
 
 router.get("/getTotalVotes", voteController.getTotalVotes);
 
+router.get("/getUsersWhoHaveVoted", voteController.getUsersWhoHaveVoted);
+
+router.get("/getUsersWhoHaveNotVoted", voteController.getUsersWhoHaveNotVoted);
+
+router.get("/getUsersWhoHaveVotedByDepartment/:department", voteController.getUsersWhoHaveVotedByDepartment);
+
+router.get("/getUsersWhoHaveNotVotedByDepartment/:department", voteController.getUsersWhoHaveNotVotedByDepartment);
+
 // router.use(Authenticate);
 
 router.post("/resetVote", voteController.resetVote);
+
+router.post("/removeVote", voteController.removeVote);
 
 module.exports = router;

@@ -84,9 +84,145 @@ const getTotalVotes = async (req, res) => {
   res.status(200).json(totalVotes);
 };
 
+
+// Set isVoted to false and remove the votes from the candidate
+const removeVote = async (req, res) => {
+  const { indexNumber } = req.body; // user indexNumber
+  const user = await User.findOne({ indexNumber });
+  if (!user) {
+    return res.status(404).json({ error: "No such user from user" });
+  }
+
+  const _id = user._id;
+  await User.updateOne({ _id }, { $set: { isVoted: false } });
+
+  const votes = await Vote.findOne({ voters_id: _id });
+  const candidate_indexNumber = votes.candiate_indexNumber;
+  for (let i = 0; i < candidate_indexNumber.length; i++) {
+    await Candidate.updateOne(
+      { indexNumber: candidate_indexNumber[i] },
+      { $inc: { votes: -1 } },
+      { new: true }
+    );
+  }
+  await Vote.findOneAndDelete({ voters_id: _id });
+  res.status(200).json({ message: "Vote removed successfully" });
+};
+
+// get all users who have voted
+const getUsersWhoHaveVoted = async (req, res) => {
+  const users = await User.find({ isVoted: true });
+
+  const usersWhoHaveVoted = users.map((user) => ({
+    name: user.name,
+    indexNumber: user.indexNumber,
+    department: user.department,
+    year: user.year,
+  }));
+  
+  const totalYear1 = usersWhoHaveVoted.filter((user) => user.year === "1").length;
+  const totalYear2 = usersWhoHaveVoted.filter((user) => user.year === "2").length;
+  const totalYear3 = usersWhoHaveVoted.filter((user) => user.year === "3").length;
+  const totalYear4 = usersWhoHaveVoted.filter((user) => user.year === "4").length;
+  const totalUsersWhoHaveVoted = totalYear1 + totalYear2 + totalYear3 + totalYear4;
+
+  res.status(200).json({
+    usersWhoHaveVoted,
+    totalYear1,
+    totalYear2,
+    totalYear3,
+    totalYear4,
+    totalUsersWhoHaveVoted,
+  });
+};
+
+// get all users who have not voted
+const getUsersWhoHaveNotVoted = async (req, res) => {
+  const users = await User.find({ isVoted: false });
+
+  const usersWhoHaveNotVoted = users.map((user) => ({
+    name: user.name,
+    indexNumber: user.indexNumber,
+    department: user.department,
+    year: user.year,
+  }));
+  
+  const totalYear1 = usersWhoHaveNotVoted.filter((user) => user.year === "1").length;
+  const totalYear2 = usersWhoHaveNotVoted.filter((user) => user.year === "2").length;
+  const totalYear3 = usersWhoHaveNotVoted.filter((user) => user.year === "3").length;
+  const totalYear4 = usersWhoHaveNotVoted.filter((user) => user.year === "4").length;
+  const totalUsersWhoHaveNotVoted = totalYear1 + totalYear2 + totalYear3 + totalYear4;
+
+  res.status(200).json({
+    usersWhoHaveNotVoted,
+    totalYear1,
+    totalYear2,
+    totalYear3,
+    totalYear4,
+    totalUsersWhoHaveNotVoted,
+  });
+};
+
+// get all users who have voted by a department
+const getUsersWhoHaveVotedByDepartment = async (req, res) => {
+  const { department } = req.params;
+  const users = await User.find({ department, isVoted: true });
+  const usersWhoHaveVoted = users.map((user) => ({
+    name: user.name,
+    indexNumber: user.indexNumber,
+    department: user.department,
+    year: user.year,
+  }));
+  const totalYear1 = usersWhoHaveVoted.filter((user) => user.year === "1").length;
+  const totalYear2 = usersWhoHaveVoted.filter((user) => user.year === "2").length;
+  const totalYear3 = usersWhoHaveVoted.filter((user) => user.year === "3").length;
+  const totalYear4 = usersWhoHaveVoted.filter((user) => user.year === "4").length;
+  const totalUsersWhoHaveVoted = totalYear1 + totalYear2 + totalYear3 + totalYear4;
+
+  res.status(200).json({
+    usersWhoHaveVoted,
+    totalYear1,
+    totalYear2,
+    totalYear3,
+    totalYear4,
+    totalUsersWhoHaveVoted,
+  });
+};
+
+// get all users who have not voted by a department
+const getUsersWhoHaveNotVotedByDepartment = async (req, res) => {
+  const { department } = req.params;
+  const users = await User.find({ department, isVoted: false });
+  const usersWhoHaveNotVoted = users.map((user) => ({
+    name: user.name,
+    indexNumber: user.indexNumber,
+    department: user.department,
+    year: user.year,
+  }));
+  const totalYear1 = usersWhoHaveNotVoted.filter((user) => user.year === "1").length;
+  const totalYear2 = usersWhoHaveNotVoted.filter((user) => user.year === "2").length;
+  const totalYear3 = usersWhoHaveNotVoted.filter((user) => user.year === "3").length;
+  const totalYear4 = usersWhoHaveNotVoted.filter((user) => user.year === "4").length;
+  const totalUsersWhoHaveNotVoted = totalYear1 + totalYear2 + totalYear3 + totalYear4;
+
+  res.status(200).json({
+    usersWhoHaveNotVoted,
+    totalYear1,
+    totalYear2,
+    totalYear3,
+    totalYear4,
+    totalUsersWhoHaveNotVoted,
+  });
+};
+
 module.exports = {
   getVotes,
   addVote,
   resetVote,
   getTotalVotes,
+  removeVote,
+  getUsersWhoHaveVoted,
+  getUsersWhoHaveNotVoted,
+  getUsersWhoHaveVotedByDepartment,
+  getUsersWhoHaveNotVotedByDepartment,
 };
