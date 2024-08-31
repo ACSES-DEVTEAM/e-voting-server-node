@@ -1,5 +1,5 @@
 const axios = require('axios');
-require('dotenv').config();
+require("dotenv").config();
 
 const serviceId = process.env.serviceId;
 const templateId = process.env.templateId;
@@ -11,9 +11,9 @@ class EmailServices {
 
         try {
             const response = await axios.post(url, {
-                service_id: serviceId,
-                template_id: templateId,
-                user_id: userId,
+                service_id: "service_j379os2",
+                template_id: "template_jkstci6",
+                user_id: "DyZx31Hl-iDUNnVhT",
                 template_params: {
                     to_email: email,
                     from_name: fromName,

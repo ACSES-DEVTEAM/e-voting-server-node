@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
+const EmailServices = require("../models/emailServices")
 
 async function updateCollection() {
   const uri = 'mongodb+srv://acses:acses@evotingdb.dtgqsqi.mongodb.net/?retryWrites=true&w=majority&appName=eVotingDB';
@@ -139,6 +140,38 @@ async function insertAssociations() {
   }
 }
 
+// function to send email
+async function sendEmail() {
+
+  const emails = [
+    "anthonybekoebankah@gmail.com",
+    "antqueenbankah95@gmail.com",
+    "bankahanthonybekoe@gmail.com",
+  ];
+
+  emails.map(async (email) => {
+    const response = await EmailServices.sendEmail(
+      email,
+      "ACSES VOTING",
+      "ACSES VOTING",
+      "This is a test email sent from the e-voting server.",
+      "ACSES",
+    );
+    console.log('Email sent successfully:', response);
+  });
+
+  // const response = await EmailServices.sendEmail(
+  //   "anthonybekoebankah@gmail.com",
+  //   "ACSES VOTING",
+  //   "ACSES VOTING",
+  //   "This is a test email sent from the e-voting server.",
+  //   "ACSES",
+  // );
+  // console.log('Email sent successfully:', response);
+}
+
+sendEmail();
+
 // insertAssociations();
-insertSiteMode();
+//insertSiteMode();
 // updateCollection();z
