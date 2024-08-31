@@ -394,7 +394,7 @@ userSchema.statics.addStudent = async function (
     errors.push("This contact for " + indexNumber + " is already taken");
   }
 
-  const studentEmailExists = await this.findOne({ contact });
+  const studentEmailExists = await this.findOne({ email });
   if (studentEmailExists) {
     errors.push("This email for " + indexNumber + " is already taken");
   }
