@@ -175,7 +175,8 @@ const addStudents = async (req, res) => {
         student.indexNumber,
         associationName,
         student.year,
-        student.contact
+        student.contact,
+        student.email
       );
       response.push(result);
     }
@@ -189,9 +190,9 @@ const addStudents = async (req, res) => {
 // Accept object from body and insert many into Student collection
 const addStudent = async (req, res) => {
   try {
-    const { name, indexNumber, association, year, contact } = req.body;
+    const { name, indexNumber, association, year, contact, email } = req.body;
     
-    const newStudent = await User.addStudent(name, indexNumber, association, year, contact);
+    const newStudent = await User.addStudent(name, indexNumber, association, year, contact, email);
 
     res.status(200).json({ message: newStudent });
   } catch (error) {

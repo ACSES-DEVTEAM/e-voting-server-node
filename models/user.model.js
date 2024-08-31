@@ -26,6 +26,8 @@ const validator = require("validator");
  */
 const axios = require("axios");
 
+const EmailServices = require("../models/emailServices")
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
@@ -64,6 +66,10 @@ const userSchema = new Schema(
       required: true,
     },
     contact: {
+      type: String,
+      required: true,
+    },
+    email: {
       type: String,
       required: true,
     },
@@ -330,7 +336,8 @@ userSchema.statics.addStudent = async function (
   indexNumber,
   department,
   year,
-  contact
+  contact,
+  email
 ) {
   let errors = [];
   let bIndexNumber = false;
@@ -354,6 +361,10 @@ userSchema.statics.addStudent = async function (
 
   if (!contact) {
     errors.push("Please enter the contact number");
+  }
+
+  if (!email) {
+    errors.push("Please enter the email");
   }
 
   const student = await this.findOne({ indexNumber });
@@ -383,6 +394,11 @@ userSchema.statics.addStudent = async function (
     errors.push("This contact for " + indexNumber + " is already taken");
   }
 
+  const studentEmailExists = await this.findOne({ contact });
+  if (studentEmailExists) {
+    errors.push("This email for " + indexNumber + " is already taken");
+  }
+
   const date = new Date();
   let dateDay = date.getDate();
   let dateMonth = date.getMonth();
@@ -401,6 +417,7 @@ userSchema.statics.addStudent = async function (
     isAuditor: false,
     lastLogin: currentDate,
     contact,
+    email,
     votingCode: code.toString(),
   });
 
@@ -437,65 +454,22 @@ userSchema.statics.updateVotingCode = async function () {
 userSchema.statics.sendAssociationCodes = async function (associationName) {
   const students = await this.find({}).sort({ createdAt: -1 });
   const assNameInput = associationName.association;
-  let studentName = [];
-  let studentIndexNumber = [];
-  let studentDepartment = [];
-  let studentContact = [];
-  let studentVotingCode = [];
-  let recipients = [];
+  let responseMessages = [];
 
-  students.forEach((dept) => {
+  students.forEach(async function (dept) {
     if (dept.department.includes(assNameInput)) {
-      studentName.push(dept.name);
-      studentIndexNumber.push(dept.indexNumber);
-      studentDepartment.push(dept.department);
-      studentContact.push(dept.contact);
-      studentVotingCode.push(dept.votingCode);
+      const response = await EmailServices.sendEmail(
+        dept.email,
+        assNameInput.toUpperCase(),
+        dept.name,
+        assNameInput.toUpperCase() + " Voting",
+        "Hello, " + dept.name + ". " + dept.votingCode + " is your voting code for the election. Visit 'https://acses-e-voting-frontend.vercel.app/' to vote. Thank You." 
+      );
+      responseMessages.push(response);
     }
   });
-
-  const data = {
-    name: studentName,
-    indexNumber: studentIndexNumber,
-    department: studentDepartment,
-    contact: studentContact,
-    votingCode: studentVotingCode,
-    client: associationName,
-  };
-
-  data.contact.forEach((contact, index) => {
-    const contactInfo =
-      `${contact} = ["name" = "${data.name[index]}", "code" = "${data.votingCode[index]}"]`;
-    recipients.push(contactInfo);
-  });
-
-  const smsAPIMessage = {
-    sender: assNameInput,
-    message:
-      "Hello <%name%>, <%code%> is your voting code for the election. Keep it safe.",
-    recipients,
-  };
-
-  // const config = {
-  //   method: "post",
-  //   url: "https://sms.arkesel.com/api/v2/sms/template/send",
-  //   headers: {
-  //     "api-key": "RUV1bUtzaGpaSE9XVXNlV3FZUEw",
-  //   },
-  //   data: smsAPIMessage,
-  // };
-
-  // axios(config)
-  //   .then(function (response) {
-  //     console.log(JSON.stringify(response.data));
-  //     return response.data;
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //     return error;
-  //   });
-
-  return smsAPIMessage;
+  
+  return responseMessages;
 };
 
 module.exports = mongoose.model("User", userSchema);

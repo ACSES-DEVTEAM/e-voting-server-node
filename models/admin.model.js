@@ -57,7 +57,8 @@ adminSchema.statics.login = async function (indexNumber, password) {
     }
 
     return {
-      message: "Super Admin Logged In",
+      _id: "Super Admin",
+      message: "Super Admin",
     };
   }
 
