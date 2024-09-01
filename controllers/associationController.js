@@ -1,5 +1,6 @@
 const Associations = require("../models/associations.model");
 const Student = require("../models/student.model");
+const User = require("../models/user.model");
 
 // get all associations
 const getAllAssociations = async (req, res) => {
@@ -63,13 +64,13 @@ const deleteAssociation = async (req, res) => {
   const { name } = req.body;
   try {
     const association = await Associations.findOneAndDelete({ name });
-    const students = await Student.find({}).sort({ createdAt: -1 });
+    const users = await User.find({}).sort({ createdAt: -1 });
     if (!association) {
       return res.status(404).json({ error: "No such association" });
     }
     let noAssociation = [];
     let someAssociation = [];
-    students.forEach((dept) => {
+    users.forEach((dept) => {
       if (dept.department.includes(name)) {
         const index = dept.department.indexOf(name);
         if (index > -1) {
@@ -83,20 +84,17 @@ const deleteAssociation = async (req, res) => {
       }
     });
 
-    for (let i = 0; i < noAssociation.length; i++) {
-      const student = await Student.findOneAndDelete({
-        indexNumber: noAssociation[i],
-      });
-    }
+    await User.deleteMany({ indexNumber: { $in: noAssociation } });
 
-    for (let i = 0; i < someAssociation.length; i++) {
-      const student = await Student.findOneAndUpdate(
-        { indexNumber: someAssociation[i] },
-        { $pull: { department: name } },
-        { $set: { department: { $each: [] } } },
-        { new: true, runValidators: true }
-      );
-    }
+    await Promise.all(
+      someAssociation.map(indexNumber =>
+        User.findOneAndUpdate(
+          { indexNumber },
+          { $pullAll: { department: [name] } },
+          { runValidators: true }
+        )
+      )
+    );
 
     res.status(200).json(association, noAssociation, someAssociation);
   } catch (error) {
