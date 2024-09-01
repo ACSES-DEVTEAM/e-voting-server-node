@@ -1,6 +1,7 @@
 const Associations = require("../models/associations.model");
-const Student = require("../models/student.model");
+const Vote = require("../models/vote.model");
 const User = require("../models/user.model");
+const Candidate = require("../models/candidate.model");
 
 // get all associations
 const getAllAssociations = async (req, res) => {
@@ -70,9 +71,11 @@ const deleteAssociation = async (req, res) => {
     }
     let noAssociation = [];
     let someAssociation = [];
+    let userId = [];
     users.forEach((dept) => {
       if (dept.department.includes(name)) {
         const index = dept.department.indexOf(name);
+        userId.push(dept._id);
         if (index > -1) {
           dept.department.splice(index, 1);
           if (dept.department.length === 0) {
@@ -85,6 +88,12 @@ const deleteAssociation = async (req, res) => {
     });
 
     await User.deleteMany({ indexNumber: { $in: noAssociation } });
+
+    await Vote.deleteMany({ voters_id: { $in: userId } });
+
+    
+    await Candidate.deleteMany({ indexNumber: { $in: [...someAssociation, ...noAssociation] } });
+    
 
     await Promise.all(
       someAssociation.map(indexNumber =>

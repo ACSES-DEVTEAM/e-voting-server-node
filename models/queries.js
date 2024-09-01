@@ -154,7 +154,7 @@ async function sendEmail() {
       email,
       "ACSES VOTING",
       "ACSES VOTING",
-      "This is a test email sent from the e-voting server.",
+      "This is a test email sent from the e-voting server to",
       "ACSES",
     );
     console.log('Email sent successfully:', response);

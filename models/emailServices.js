@@ -30,12 +30,11 @@ class EmailServices {
             });
 
             console.log('Email sent successfully:', response.data);
-            return (response.data); // Return true indicating success
+            return ("Email sent successfully to " + email); // Return true indicating success
         } catch (error) {
             console.error('Failed to send email:', error);
             return false; // Return false indicating failure
         }
     }
 }
-
 module.exports = EmailServices;

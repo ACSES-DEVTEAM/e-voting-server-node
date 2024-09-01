@@ -456,15 +456,16 @@ userSchema.statics.sendAssociationCodes = async function (associationName) {
   const assNameInput = associationName.association;
   let responseMessages = [];
 
-  students.forEach(async function (dept) {
-    if (dept.department.includes(assNameInput)) {
+  students.map(async (dept) => {
+    if (dept.department.includes(assNameInput) && dept.email != "dummyEmail@gmail.com") {
       const response = await EmailServices.sendEmail(
         dept.email,
         assNameInput.toUpperCase(),
         dept.name,
-        assNameInput.toUpperCase() + " Voting",
-        "Hello, " + dept.name + ". " + dept.votingCode + " is your voting code for the election. Visit 'https://acses-e-voting-frontend.vercel.app/' to vote. Thank You." 
+        `Hello, ${dept.name}. ${dept.votingCode} is your voting code for the election. Visit https://acses-e-voting-frontend.vercel.app/ to vote. Thank You.`,
+        `${assNameInput.toUpperCase()} Voting`,
       );
+
       responseMessages.push(response);
     }
   });
